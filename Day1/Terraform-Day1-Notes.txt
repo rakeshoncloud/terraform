@@ -1,0 +1,55 @@
+provider "aws" {
+    region = "us-east-1"  # Set your desired AWS region
+}
+
+
+ resource "aws_instance" "example" {
+  ami = "${data.aws_ami.ubuntu.id}"  # get the latest AMI ID through data resource query 
+  #ami = "ami-053b0d53c279acc90"
+  instance_type = "t2.micro"
+  subnet_id = "subnet-0193b8974abab6dad"
+  key_name = "aws-kvp"
+ }
+
+
+ data "aws_ami" "ubuntu" {
+  
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20230516"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+# to store the ami.id in the output varible 
+output ami_id {
+    value = data.aws_ami.ubuntu.id
+}
+
+
+Commands:
+First command to run in terraform
+Reqrequisite: Install aws CLI as aws is required for terraform
+
+aws configure
+PS C:\Users\rakesh\terraform\Day1> aws configure                                                
+AWS Access Key ID [****************X2FO]: Enteryouraccesskeyidhere
+AWS Secret Access Key [****************sPPe]: Enteryoursecretaccesskeyhere
+Default region name [us-east-1]: Enter
+Default output format [json]: Enter
+
+aws ec2 describe-instances # to check aws is configured or not
+
+terraform init
+terraform plan
+terraform apply
+aws ec2 describe-instances #to verify whether the instance is created
+terrafrom destroy
+
+
