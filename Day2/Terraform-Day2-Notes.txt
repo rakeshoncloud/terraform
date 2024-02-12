@@ -1,0 +1,147 @@
+Terraform - Day 2 Zero to Hero Abhishek Veeramalla
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In this session we wil learn about:
+
+I   Providers - multi cloud and multi region providers
+II  Variables - Input and output variables
+III structuring terraform projects
+IV  tfvars - passing values to the input variables
+V   Conditional Expressions - conditional selection of variable values
+VI  built-in functions in terraform
+
+I Providers
+-----------
+
+provider "aws" {
+    region = "us-east-1"
+}
+
+Where it will create resource? 
+region to locate the resource
+
+Acts as a medium for terraform to understand the region of the resource creation
+
+Three classes of Terraform providers:
+-------------------------------------
+1. Official Providers - AWS AZURE GCP Kubernates
+2. Partner Providers: - Alibabab Cloud and OCI
+3. Community Providers - Open source providers and are actively contributuons
+
+Types of provider architectures
+-------------------------------
+
+1. Hybrid Cloud Architecture of Terraform
+2. Multi-region architecture of Terraform
+
+1. multi-cloud or Hybrid cloud - Multiple provider plugins can be used in the 
+terraform configuration files to create and manage resources in the Hybrid cloud
+
+2. Multi region cloud - resources can be set up in a single cloud infrastructure 
+platform but is spread accross its muliple regions.
+
+official documentation can be referred and the resource block for configuring the 
+specific resources can be created and managed.
+
+II Variables - Parameterising the project
+-----------------------------------------
+
+Parameters make the terraform configurations dynamic, flexible and re-usable.
+We should not hard code the values in Terraform. We can create a seperate 
+file to store all the values in variables.
+
+Example, using ami values from the variable instead of hardcoding it.
+
+Input variables - pass values to terraform configuration.
+Output variables - output values from the resources such as instanceId
+public IP, etc
+
+Input variables: keyword - variable
+
+Output Variables:
+(Print the Public IP of the instance create and can be printed on the console)
+keyword - output
+
+Once the terraform apply or terraform refresh is executed, output variables can also be 
+accessed using the "terraform output" command:
+ 
+terraform output
+ami_id = "ami-053b0d53c279acc90" 
+
+III. structuring terraform projects using seperate files 
+---------------------------------------------------------
+This involves seggregation of configuration blocks in terraform 
+into seperate files so as to organise the configurations.
+IT is easy to manage the configuration and maintain it.
+
+We can provide a structure to our terraform project by seperating the 
+configurations into seperate files.
+
+provider.tf - plugins for cloud service specific configurations
+input.tf - input varaibles
+output.tf - output variables
+main.tf - mainly reource blocks
+
+IV terraform.tfvars - values of variables to be passed to the variables 
+-----------------------------------------------------------------------
+
+tfvars file: using tfvars files we can write actual values 
+of the variables and pass these values to the terraform.
+
+terraform.tfvars - no need to pass it in the command line.
+we can use this file to pass the values to the variables.
+Example: ami_id value can be passed so that teams can change
+it dynamically.
+
+dev.tfvars - we need to pass terraform -var-file=dev.tfvars
+Example: terraform apply -var-file=dev.tfvars
+
+Note:
+~~~~~
+
+There are three ways of providing input values to Terraform configuration 
+using variables. 
+
+1. Namely—default values, 
+2. CLI arguments, and 
+3. .tfvars file. 
+
+The precedence is given to values passed via CLI arguments. 
+This is followed by values passed using the .tfvars file and 
+lastly, the default values are considered.
+
+V Conditionals Operators
+--------------------------
+conditional access - through conditional operator
+
+condition ? true : false
+
+resource "aws_security_group" "example" {
+  name        = "example-sg"
+  description = "Example security group"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.environment == "production" ? [var.production_subnet_cidr] : [var.development_subnet_cidr]
+  }
+}
+
+In this example, the ingress block within the aws_security_group 
+resource uses a conditional expression to control whether SSH access 
+is allowed. If enable_ssh is true, it allows SSH traffic from any 
+source ("0.0.0.0/0"); otherwise, it allows no inbound traffic.
+
+Conditional expressions in Terraform provide a powerful way to make 
+decisions and customize your infrastructure deployments based on 
+various conditions and variables. They enhance the flexibility and 
+reusability of your Terraform configurations.
+
+
+VI built-in functions:
+----------------------
+some examples: 
+length(), map(), lookup(map, key)
+join(seperator, list) concat(var.list1, var.list2),
+element(list,index)
+
